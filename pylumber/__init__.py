@@ -9,8 +9,8 @@
 # ~~~~~~ |
 
 import os
+import re
 import timeit
-
 
 class ANSI_MODI:
     """ANSI Modification Codes"""
@@ -39,22 +39,75 @@ class ANSI_BACK:
     ACCENT5     = '\033[105m'            # MAGENTA
     ACCENT6     = '\033[106m'            # CYAN
 
+class CONST:
+    PREFIX_SPACE = 8
+    PREFIX_CHAR = " "
+    PREFIX_MODI = [ANSI_MODI.BOLD]
 
-#class HEADER:
-#    INFO = COLOR
+class LOG_PREFIX:
+    # List of Modifications for Prefixes
+    INFO_MODI   = [ANSI_FORE.ACCENT4]
+    INFO        = "%s[%s]%s" %(''.join(CONST.PREFIX_MODI + INFO_MODI),
+                               "INFO".center(CONST.PREFIX_SPACE, CONST.PREFIX_CHAR),
+                               ANSI_MODI.END)
+    OK_MODI     = [ANSI_FORE.ACCENT2]     
+    OK          = "%s[%s]%s" %(''.join(CONST.PREFIX_MODI + OK_MODI),
+                              "OK".center(CONST.PREFIX_SPACE, CONST.PREFIX_CHAR), 
+                              ANSI_MODI.END)
+    WARN_MODI   = [ANSI_FORE.ACCENT3]
+    WARN        = "%s[%s]%s" %(''.join(CONST.PREFIX_MODI + WARN_MODI), 
+                              "WARN".center(CONST.PREFIX_SPACE, CONST.PREFIX_CHAR), 
+                              ANSI_MODI.END)
+    ERROR_MODI  = [ANSI_FORE.ACCENT1]
+    ERROR       = "%s[%s]%s" %(''.join(CONST.PREFIX_MODI + ERROR_MODI), 
+                              "ERROR".center(CONST.PREFIX_SPACE, CONST.PREFIX_CHAR), 
+                              ANSI_MODI.END)
+    DEBUG_MODI  = [ANSI_FORE.ACCENT5]
+    DEBUG       = "%s[%s]%s" %(''.join(CONST.PREFIX_MODI + DEBUG_MODI), 
+                               "DEBUG".center(CONST.PREFIX_SPACE, CONST.PREFIX_CHAR), 
+                               ANSI_MODI.END)
 
+# q: What is the regex expression for matching all sets between '\' and 'm'?
+# a: \033\[[0-9;]*m
 
-def test(msg, ansi):
-    print("%s%s%s" %(ansi, msg, ANSI_MODI.END))
-
+# Helper Function | Removes all ANSI Codes from String
+def STRIP_ANSI(string):
+    return re.sub(r'\033\[[0-9;]*m', '', string)
 
 class LUMBERJACK:
     def __init__(self, logFile=None, logLevel=0):
         self.logFile = open(logFile, "w") if logFile else None
     
-    def 
+    def pinfo(self, msg):
+        print(f"{LOG_PREFIX.INFO} {msg}")
+        if self.logFile:
+            self.logFile.write(STRIP_ANSI(f"{LOG_PREFIX.INFO} {msg}"))
+
+    def pok(self, msg):
+        print(f"{LOG_PREFIX.OK} {msg}")
+        if self.logFile:
+            self.logFile.write(STRIP_ANSI(f"{LOG_PREFIX.OK} {msg}"))
+
+    def pwarn(self, msg):
+        print(f"{LOG_PREFIX.WARN} {msg}")
+        if self.logFile:
+            self.logFile.write(STRIP_ANSI(f"{LOG_PREFIX.WARN} {msg}"))
+
+    def pdebug(self, msg):
+        print(f"{LOG_PREFIX.DEBUG} {msg}")
+        if self.logFile:
+            self.logFile.write(STRIP_ANSI(f"{LOG_PREFIX.DEBUG} {msg}"))
+
+    def perror(self, msg):
+        print(f"{LOG_PREFIX.ERROR} {msg}")
+        if self.logFile:
+            self.logFile.write(STRIP_ANSI(f"{LOG_PREFIX.ERROR} {msg}"))
 
 # PRINT Information Prompt and Saves to Log File
 
-
-test("Hello World", ANSI_FORE.ACCENT1)
+testJacker = LUMBERJACK(logFile="test.log")
+testJacker.pinfo("Hello World")
+testJacker.pok("Hello World")
+testJacker.pwarn("Hello World")
+testJacker.perror("Hello World")
+testJacker.pdebug("Hello World")
