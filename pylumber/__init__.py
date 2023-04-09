@@ -12,6 +12,8 @@ import os
 import re
 import timeit
 
+import format
+
 class ANSI_MODI:
     """ANSI Modification Codes"""
     BOLD        = '\033[1m'             # BOLD
@@ -43,6 +45,16 @@ class CONST:
     PREFIX_SPACE = 8
     PREFIX_CHAR = " "
     PREFIX_MODI = [ANSI_MODI.BOLD]
+    LOG_LEVEL = {
+        # Definition for int Log Files:
+        0       : ("ERROR", ANSI_FORE.ACCENT1),
+        1       : ("OK", ANSI_FORE.ACCENT2),
+        2       : ("WARN", ANSI_FORE.ACCENT3),
+        3       : ("INFO", ANSI_FORE.ACCENT4),
+        4       : ("DEBUG", ANSI_FORE.ACCENT5)
+    }   
+
+
 
 class LOG_PREFIX:
     # List of Modifications for Prefixes
@@ -75,39 +87,32 @@ def STRIP_ANSI(string):
     return re.sub(r'\033\[[0-9;]*m', '', string)
 
 class LUMBERJACK:
-    def __init__(self, logFile=None, logLevel=0):
+    def __init__(self, logFile=None, logDict: dict = CONST.LOG_LEVEL, logPrint=False):
         self.logFile = open(logFile, "w") if logFile else None
+        self.DICT = {}
+        self.DICT = logDict
+        self.DICT = {v[0]: (k, v[2]) for k, v in logDict.items()}
     
+    def logWriter(self, msg):
+        if self.logFile:
+            self.logFile.write(STRIP_ANSI(msg + "\n"))
+
     def pinfo(self, msg):
         print(f"{LOG_PREFIX.INFO} {msg}")
-        if self.logFile:
-            self.logFile.write(STRIP_ANSI(f"{LOG_PREFIX.INFO} {msg}"))
+        self.logWriter(f"{LOG_PREFIX.INFO} {msg}")
 
     def pok(self, msg):
         print(f"{LOG_PREFIX.OK} {msg}")
-        if self.logFile:
-            self.logFile.write(STRIP_ANSI(f"{LOG_PREFIX.OK} {msg}"))
+        self.logFile(f"{LOG_PREFIX.OK} {msg}")
 
     def pwarn(self, msg):
         print(f"{LOG_PREFIX.WARN} {msg}")
-        if self.logFile:
-            self.logFile.write(STRIP_ANSI(f"{LOG_PREFIX.WARN} {msg}"))
+        self.logFile(f"{LOG_PREFIX.OK} {msg}")
 
     def pdebug(self, msg):
         print(f"{LOG_PREFIX.DEBUG} {msg}")
-        if self.logFile:
-            self.logFile.write(STRIP_ANSI(f"{LOG_PREFIX.DEBUG} {msg}"))
+        self.logFile(f"{LOG_PREFIX.OK} {msg}")
 
     def perror(self, msg):
         print(f"{LOG_PREFIX.ERROR} {msg}")
-        if self.logFile:
-            self.logFile.write(STRIP_ANSI(f"{LOG_PREFIX.ERROR} {msg}"))
-
-# PRINT Information Prompt and Saves to Log File
-
-testJacker = LUMBERJACK(logFile="test.log")
-testJacker.pinfo("Hello World")
-testJacker.pok("Hello World")
-testJacker.pwarn("Hello World")
-testJacker.perror("Hello World")
-testJacker.pdebug("Hello World")
+        self.logFile(f"{LOG_PREFIX.OK} {msg}")
