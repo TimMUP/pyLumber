@@ -1,3 +1,3 @@
-# Formatting Functions:
-def 
+def ffprint(msg):
+    return "test"
 

@@ -12,8 +12,6 @@ import os
 import re
 import timeit
 
-import format
-
 class ANSI_MODI:
     """ANSI Modification Codes"""
     BOLD        = '\033[1m'             # BOLD
@@ -54,6 +52,16 @@ class CONST:
         4       : ("DEBUG", ANSI_FORE.ACCENT5)
     }   
 
+    DEFAULT_LOG_PARAM = [
+        # Default Parameters for Log Files:
+        ("ERROR", ANSI_FORE.ACCENT1),
+        ("OK", ANSI_FORE.ACCENT2),
+        ("WARN", ANSI_FORE.ACCENT3),
+        ("INFO", ANSI_FORE.ACCENT4),
+        ("DEBUG", ANSI_FORE.ACCENT5)
+    ]
+    
+
 
 
 class LOG_PREFIX:
@@ -87,32 +95,18 @@ def STRIP_ANSI(string):
     return re.sub(r'\033\[[0-9;]*m', '', string)
 
 class LUMBERJACK:
-    def __init__(self, logFile=None, logDict: dict = CONST.LOG_LEVEL, logPrint=False):
+    def __init__(self, logFile=None, logParameter: list = CONST.DEFAULT_LOG_PARAM, logPrint=False):
         self.logFile = open(logFile, "w") if logFile else None
         self.DICT = {}
-        self.DICT = logDict
-        self.DICT = {v[0]: (k, v[2]) for k, v in logDict.items()}
+        for i in range(len(logParameter)):
+            logPrefix = f"{logParameter[i][1]}[{logParameter[i][0].center(CONST.PREFIX_SPACE, CONST.PREFIX_CHAR)}]{ANSI_MODI.END}"
+            self.DICT[i] = logPrefix
+            self.DICT[logParameter[i][0]] = logPrefix
     
     def logWriter(self, msg):
         if self.logFile:
             self.logFile.write(STRIP_ANSI(msg + "\n"))
 
-    def pinfo(self, msg):
-        print(f"{LOG_PREFIX.INFO} {msg}")
-        self.logWriter(f"{LOG_PREFIX.INFO} {msg}")
-
-    def pok(self, msg):
-        print(f"{LOG_PREFIX.OK} {msg}")
-        self.logFile(f"{LOG_PREFIX.OK} {msg}")
-
-    def pwarn(self, msg):
-        print(f"{LOG_PREFIX.WARN} {msg}")
-        self.logFile(f"{LOG_PREFIX.OK} {msg}")
-
-    def pdebug(self, msg):
-        print(f"{LOG_PREFIX.DEBUG} {msg}")
-        self.logFile(f"{LOG_PREFIX.OK} {msg}")
-
-    def perror(self, msg):
-        print(f"{LOG_PREFIX.ERROR} {msg}")
-        self.logFile(f"{LOG_PREFIX.OK} {msg}")
+    def jack(self, msg: str, logLevel = "OK"):
+        self.logWriter(STRIP_ANSI(msg))
+        print(f"{self.DICT[logLevel]} {msg}{ANSI_MODI.END}")
