@@ -15,7 +15,7 @@ setup(
     install_requires=[],
     keywords=['python', 'logging', 'debugging', 'lumberjack'],
     classifiers= [
-        "Development Status :: 1 - Alpha",
+        "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License"

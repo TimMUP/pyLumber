@@ -76,7 +76,7 @@ class lumberjack:
         if self.logFile:
             self.logFile.write(STRIP_ANSI(msg + "\n"))
 
-    def jack(self, msg: str, logLevel = "OK"):
+    def log(self, msg: str, logLevel = "OK"):
         modiMsg = f"{self.DICT[logLevel][0]} {msg}{ANSI_MODI.END}"
         self.logWriter(modiMsg)
         print(modiMsg)
