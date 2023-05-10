@@ -1,11 +1,11 @@
 import pylumber as lum
 
 
-mainLog = lum.lumberjack('test.log')
+mainLog = lum.lumberjack('test.log', silent=True)
 
-mainLog.jack("Hello World!", "OK")
-mainLog.jack("Hello World!", "ERROR")
-mainLog.jack("Hello World!", "DEBUG")
+mainLog.log("Hello World!", "OK")
+mainLog.log("Hello World!", "ERROR")
+mainLog.log("Hello World!", "DEBUG")
 
 
 testParameter = [
@@ -15,8 +15,8 @@ testParameter = [
 ]
 
 testLog = lum.lumberjack('test2.log', logParameter=testParameter)
-testLog.jack("Works?", "RED")
-testLog.jack("Works?", "GREEN")
-testLog.jack("Works?", "ORANGE")
+testLog.log("Works?", "RED")
+testLog.log("Works?", "GREEN")
+testLog.log("Works?", "ORANGE")
 
-testLog.jack(testLog.format("Works?", "RED"), "RED")
+testLog.log(testLog.format("Works?", "RED"), "RED")

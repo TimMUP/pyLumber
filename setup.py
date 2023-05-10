@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
-VERSION = '0.1.0'
+VERSION = '0.1.2'
 DESCRIPTION = 'Lumberjack for your Code, Logs, Prints, Errors and more.'
-LONG_DESCRIPTION = 'pyLumber is a Python library for logging and debugging. It is designed to be simple and easy to use.'
+LONG_DESCRIPTION = 'pyLumber is a Python library for logging and debugging. It is designed to be simple and easy to use, while being user friendly to those who are in a business setting.'
 
 setup(
     name="pylumber",
